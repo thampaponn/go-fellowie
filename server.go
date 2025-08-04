@@ -1,21 +1,34 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
-	"github.com/labstack/echo"
-	"github.com/tunatun/go-fellowie/database"
+	_ "github.com/lib/pq"
+
+	"github.com/labstack/echo/v4"
+	"github.com/thampaponn/go-fellowie/controller"
+	_ "github.com/thampaponn/go-fellowie/models"
+	"github.com/thampaponn/go-fellowie/repository"
 )
 
 func main() {
-	db, err := database.Connect()
+	_, err := repository.InitDB()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Could not connect to DB: %v", err)
 	}
-	defer db.Close()
+	defer repository.CloseDB()
+
+	// Initialize Echo framework
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
+
+	e.POST("/users", controller.CreateUser)
+	e.GET("/users", controller.GetUsers)
+	e.PATCH("/users/:id", controller.UpdateUser)
+	e.DELETE("/users/:id", controller.DeleteUser)
+
 	e.Logger.Fatal(e.Start(":8080"))
 }
