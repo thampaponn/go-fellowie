@@ -66,9 +66,11 @@ func GetUsers(c echo.Context) error {
 	m := make(map[string]int)
 	m["total"] = len(users)
 	m["number-1"] = 1
+	m["number-2"] = 2
 
 	fmt.Println("Total users:", m["total"])
 	fmt.Println("Number 1:", m["number-1"])
+	fmt.Println("Number 2:", m["number-2"])
 
 	return c.JSON(http.StatusOK, users)
 }
